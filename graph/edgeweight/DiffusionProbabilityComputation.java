@@ -10,10 +10,10 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.io.DoubleWritable;
-public class DiffusionProbabiltyComputation {
+public class DiffusionProbabilityComputation {
 
 public static class EdgeProbabilityMapper
-       extends Mapper<Object, Text, Text,Text>{
+       extends Mapper<Object, Text, Text,IntWritable>{
 
   public static int getBinomial( double p) {
   	int x = 0;
@@ -25,7 +25,7 @@ public static class EdgeProbabilityMapper
                     ) throws IOException, InterruptedException {
         String [] splits = value.toString().trim().split("\t");
   	double prob = Double.parseDouble(splits[1].trim());
-        context.write(new Text(splits[0]),getBinomial(prob));
+        context.write(new Text(splits[0]),new IntWritable(getBinomial(prob)));
       }
 
   }
@@ -54,10 +54,10 @@ public static class EdgeProbabilityMapper
    // job.setCombinerClass(IntSumReducer.class);
    // job.setReducerClass(IntSumReducer.class);
     job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(DoubleWritable.class);
+    job.setOutputValueClass(IntWritable.class);
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
-    System.exit(job1.waitForCompletion(true) ? 0 : 1);
+    System.exit(job.waitForCompletion(true) ? 0 : 1);
 
    }
 }
