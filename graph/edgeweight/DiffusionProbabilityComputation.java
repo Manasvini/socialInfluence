@@ -10,9 +10,9 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.io.DoubleWritable;
-public class Computation {
+public class DiffusionProbabiltyComputation {
 
-public static class EdgeCountMapper
+public static class EdgeProbabilityMapper
        extends Mapper<Object, Text, Text,Text>{
 
   public static int getBinomial( double p) {
@@ -29,7 +29,7 @@ public static class EdgeCountMapper
       }
 
   }
-  public static class EdgeCountReducer
+/*  public static class EdgeCountReducer
        extends Reducer<Text,Text,Text,Text> {
     private Text result = new Text();
 
@@ -44,17 +44,17 @@ public static class EdgeCountMapper
       context.write(key, result);
     }
   }
-
+*/
 
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "Compute Edge Weights");
-    job.setJarByClass(EdgeWeightComputation.class);
-    job.setMapperClass(TokenizerMapper.class);
-    job.setCombinerClass(IntSumReducer.class);
-    job.setReducerClass(IntSumReducer.class);
+    job.setJarByClass(DiffusionProbabilityComputation.class);
+    job.setMapperClass(EdgeProbabilityMapper.class);
+   // job.setCombinerClass(IntSumReducer.class);
+   // job.setReducerClass(IntSumReducer.class);
     job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(IntWritable.class);
+    job.setOutputValueClass(DoubleWritable.class);
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
     System.exit(job1.waitForCompletion(true) ? 0 : 1);
